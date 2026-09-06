@@ -1,0 +1,53 @@
+# 認証コンソールのローカル開発環境。
+#
+# Go はコンテナ内でだけ動かす（ローカルに Go を入れない）。
+# DynamoDB は本番を直接見る。ローカル DynamoDB を立てないのは、
+# テーブルが 3 つと小さく、認可設定は本番の実データで確認したいため。
+# **書き込みを伴う操作はコンソール経由に限る**（直接 CLI で本番を触らない）。
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/go/Dockerfile
+      target: dev
+    # air 等のホットリロードは入れない。保存のたびに再ビルドされるより、
+    # 明示的に叩き直す方が「今どの版が動いているか」が分かりやすい。
+    command: go run ./cmd/app
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      AWS_REGION: ap-northeast-1
+      COGNITO_USER_POOL_ID: ap-northeast-1_XXXXXXXXX
+      COGNITO_CLIENT_ID: 204abn1nr4r1bfs2d77rkirqaj
+      AUTH_USERS_TABLE: auth-users
+      AUTH_GRANTS_TABLE: auth-grants
+      AUTH_IDENTITIES_TABLE: auth-identities
+      # 緊急用の抜け道。通常は空にしておくこと。
+      # Google IdP が使えなくなったときだけ、ここに email を入れて起動する。
+      BREAK_GLASS_EMAIL: ""
+    volumes:
+      - ./backend:/app
+      # go mod のキャッシュを保持する（毎回の再取得を避ける）
+      - go-mod-cache:/go/pkg/mod
+      # 本番 DynamoDB を読むための認証情報（read-only でマウント）
+      - ~/.aws:/root/.aws:ro
+
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    # 依存は初回だけ入れる。node_modules をボリュームに逃がして
+    # ホスト側（macOS）のバイナリと混ざらないようにする。
+    command: sh -c "npm install --silent && npx vite --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  go-mod-cache:
+  frontend-node-modules:

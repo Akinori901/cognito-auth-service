@@ -1,0 +1,260 @@
+/*
+ * 認証コンソールのスタイル。
+ *
+ * UI ライブラリを入れていないのは、画面が「一覧」と「詳細フォーム」の
+ * 2 つしかないため。依存を増やすより、素の CSS で足りる範囲に留める。
+ */
+
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --border: #d8dce3;
+  --text: #1f2933;
+  --muted: #6b7684;
+  --accent: #2563eb;
+  --danger: #b4453c;
+  --ok: #1f7a5c;
+
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+button {
+  font: inherit;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button.danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+input[type="text"],
+input[type="email"],
+select {
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  width: 100%;
+}
+
+.header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.header .spacer {
+  margin-left: auto;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.6rem 1.4rem 4rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+th {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+tr.clickable:hover td {
+  background: #f0f4fb;
+  cursor: pointer;
+}
+
+/* 見出しと状態系のセルは折り返さない。列が詰まると
+   「コンソール」が 2 行になり、行の高さが揃わなくなる。
+   長くなりうるメール・メモ列は従来どおり折り返す。 */
+th {
+  white-space: nowrap;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  /* 列が狭いと「有効」が 1 文字ずつ縦に折り返されてしまう。
+     バッジは常に 1 行で読ませる。 */
+  white-space: nowrap;
+}
+
+.badge.active {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.badge.suspended {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.error {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.row {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* 状態バッジと操作ボタンを 1 行に収める。
+   .row は flex-wrap: wrap の共通クラスで、狭い列だとボタンが
+   下に落ちて行の高さが揃わなくなるため、この用途では折り返さない。 */
+.cell-inline {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 0.8rem;
+}
+
+.field label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.scopes {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+}
+
+.scopes label {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.center {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+/* 使えるアプリのリンク集 */
+.app-links {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.app-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+a.app-link:hover {
+  background: #f0f4fb;
+  border-color: var(--accent, #2f6feb);
+}
+
+/* 各アプリが配信しているファビコンをそのまま出す。
+   サイズがまちまち（16px〜512px）なので枠を固定して縮める。 */
+.app-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* 名前と説明。アイコンの右に縦積みする。 */
+.app-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+/* 画面を持たないアプリ。押せないことを見た目でも示す。 */
+.app-link.disabled {
+  opacity: 0.6;
+}

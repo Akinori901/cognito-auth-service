@@ -1,0 +1,54 @@
+# auth-user-pool terraform 変数テンプレート
+# 実値は terraform.tfvars にコピーして設定する（tfvars は .gitignore 済み・コミット禁止）。
+# 秘匿情報（メールアドレス・Google認証情報・AWSアカウントID）は絶対にコミットしないこと。
+
+aws_region          = "ap-northeast-1"
+allowed_account_ids = ["123456789012"] # apply を許可する実アカウントID
+
+# --- Cognito 命名（既定のままでよい） ---
+# pool_name     = "auth-user-pool"
+# domain_prefix = "auth"
+
+# --- SkillLogger の callback / logout URL ---
+# 本番 CloudFront: https://example-app-2.cloudfront.net
+# ローカル開発: フロントのポート（FRONTEND_PORT 既定 9999）に合わせる
+skilllogger_callback_urls = [
+  "http://localhost:9999/auth/callback",
+  "https://example-app-2.cloudfront.net/auth/callback",
+]
+skilllogger_logout_urls = [
+  "http://localhost:9999/login",
+  "https://example-app-2.cloudfront.net/login",
+]
+
+# --- MoneyPilot の callback / logout URL ---
+# 本番 CloudFront: https://example-app-3.cloudfront.net
+# ローカル開発: frontend は docker-compose でホスト側 5174 に公開
+money_pilot_callback_urls = [
+  "http://localhost:5174/auth/callback",
+  "https://example-app-3.cloudfront.net/auth/callback",
+]
+money_pilot_logout_urls = [
+  "http://localhost:5174/login",
+  "https://example-app-3.cloudfront.net/login",
+]
+
+# --- Google IdP（Google Cloud Console で取得） ---
+# 承認済みリダイレクト URI に terraform output google_redirect_uri の値を登録すること。
+google_oauth_client_id     = "xxxxxxxxxxxx.apps.googleusercontent.com"
+google_oauth_client_secret = "GOCSPX-xxxxxxxxxxxxxxxxxxxx"
+
+# --- 初期アカウント（締め出し防止） ---
+initial_admin_email = "you@example.com"
+
+# --- task-scope の callback / logout URL ---
+# 本番 CloudFront: https://example-app-1.cloudfront.net
+# ローカル開発: frontend は docker-compose でホスト側 3100 に公開
+task_scope_callback_urls = [
+  "http://localhost:3100/auth/callback",
+  "https://example-app-1.cloudfront.net/auth/callback",
+]
+task_scope_logout_urls = [
+  "http://localhost:3100/login",
+  "https://example-app-1.cloudfront.net/login",
+]
